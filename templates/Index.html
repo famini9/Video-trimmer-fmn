@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Trimmer</title>
+    <style>
+        body { font-family: Arial; background: #0f0f0f; color: white; padding: 20px; text-align: center; }
+        input, button { padding: 10px; margin: 10px; border-radius: 8px; border: none; width: 90%; max-width: 400px; }
+        button { background: #ff0000; color: white; font-weight: bold; cursor: pointer; }
+        #preview { display: none; margin-top: 20px; }
+        img { width: 100%; max-width: 400px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🔥 YouTube Video Trimmer</h1>
+    <input type="text" id="url" placeholder="Weka Link ya YouTube hapa">
+    <button onclick="getInfo()">Pata Info</button>
+    
+    <div id="preview">
+        <img id="thumb" src="">
+        <h3 id="title"></h3>
+        <p>Mwanzo: <input type="number" id="start" value="0"> sekunde</p>
+        <p>Mwisho: <input type="number" id="end" value="10"> sekunde</p>
+        <select id="format">
+            <option value="mp4">MP4 1080p</option>
+            <option value="mp3">MP3 Audio</option>
+        </select><br>
+        <button onclick="download()">Download Sasa</button>
+    </div>
+
+<script>
+let currentUrl = '';
+async function getInfo() {
+    currentUrl = document.getElementById('url').value;
+    let res = await fetch('/get_info', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({url: currentUrl})});
+    let data = await res.json();
+    document.getElementById('title').innerText = data.title;
+    document.getElementById('thumb').src = data.thumbnail;
+    document.getElementById('end').value = data.duration;
+    document.getElementById('preview').style.display = 'block';
+}
+async function download() {
+    let body = {url: currentUrl, start: start.value, end: end.value, format: format.value};
+    window.location = '/download?' + new URLSearchParams(body);
+}
+</script>
+</body>
+</html>
